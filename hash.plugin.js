@@ -21,7 +21,7 @@ module.exports = hash => ({
                 console.log("[hash] Updated!")
                 BdApi.alert("hash", BdApi.React.createElement("div", {
                     class: "defaultColor-24IHKz",
-                    dangerouslySetInnerHTML: { __html: `Updated to ${hash.version}\nChanges: ${hash.changes}` }
+                    dangerouslySetInnerHTML: { __html: `Updated to ${hash.version}<br>${hash.changes}` }
                 }))
             })
         })
