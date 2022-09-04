@@ -4,9 +4,9 @@
  * @description hash.dreamys.studio but for BetterDiscord. https://dsc.gg/dxxxxy
  * @version 0.1.1
  * @changes Changes:
- * \n+ added update checker
- * \n+ removed context menu on click
- * \n+ deleted downloaded files
+ * <br>+ added update checker
+ * <br>+ removed context menu on click
+ * <br>+ deleted downloaded files
  */
 
 module.exports = hash => ({
@@ -19,7 +19,10 @@ module.exports = hash => ({
             download("https://raw.githubusercontent.com/DxxxxY/BDPlugins/master/hash.plugin.js", `${__dirname}/hash.plugin.js`, (err) => {
                 if (err) return BdApi.alert("hash", `Failed to update: ${err}`)
                 console.log("[hash] Updated!")
-                BdApi.alert("hash", `Updated to ${hash.version}\nChanges:${hash.changes}`)
+                BdApi.alert("hash", BdApi.React.createElement("div", {
+                    class: "defaultColor-24IHKz",
+                    dangerouslySetInnerHTML: { __html: `Updated to ${hash.version}\nChanges: ${hash.changes}` }
+                }))
             })
         })
         console.log("[hash] Started!")
