@@ -2,15 +2,30 @@
  * @name hash
  * @author dxxxxy
  * @description hash.dreamys.studio but for BetterDiscord. https://dsc.gg/dxxxxy
- * @version 0.0.1
+ * @version 0.1.1
+ * @changes Changes:
+ * \n+ added update checker
+ * \n+ removed context menu on click
+ * \n+ deleted downloaded files
  */
 
 module.exports = hash => ({
     start() {
-        console.log("hash.plugin.js loaded")
+        //really simple update checker
+        request.get("https://raw.githubusercontent.com/DxxxxY/BDPlugins/master/hash.plugin.js", (err, res, body) => {
+            if (err) return BdApi.alert("hash", `Error checking for updates: ${err}`)
+            const script = fs.readFileSync(`${__dirname}/hash.plugin.js`, "UTF-8")
+            if (body == script) return
+            download("https://raw.githubusercontent.com/DxxxxY/BDPlugins/master/hash.plugin.js", `${__dirname}/hash.plugin.js`, (err) => {
+                if (err) return BdApi.alert("hash", `Failed to update: ${err}`)
+                console.log("[hash] Updated!")
+                BdApi.alert("hash", `Updated to ${hash.version}`)
+            })
+        })
+        console.log("[hash] Started!")
     },
     stop() {
-        console.log("hash.plugin.js unloaded")
+        console.log("[hash] Stopped!")
     },
     observer() {
         const menu = document.querySelector("#message > div > div:nth-child(2)")
@@ -49,6 +64,8 @@ module.exports = hash => ({
             }
 
             button.onclick = () => {
+                menu.parentNode.parentNode.remove() //remove menu
+
                 const dir = `${__dirname}/hash`
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir);
@@ -56,11 +73,11 @@ module.exports = hash => ({
 
                 //download jar
                 download(url, `${dir}/${url.substring(url.lastIndexOf("/") + 1)}`, (err) => {
-                    if (err) BdApi.alert("Error while downloading file", err)
+                    if (err) BdApi.alert("hash", `Failed to download file: ${err}`)
 
                     //then download hashes
                     request.get("https://hash.dreamys.studio/script.js", (err, res, body) => {
-                        if (err) BdApi.alert("Error while downloading hashes", err)
+                        if (err) BdApi.alert("hash", `Failed to download hashes: ${err}`)
 
                         //get hashes array from script.js
                         body = body.substring(body.indexOf("[{"), body.indexOf("}]") + 1).substring(1).replaceAll("\"", "\\\"")
@@ -99,6 +116,9 @@ module.exports = hash => ({
                                 cancelText: "Copy Result",
                                 onCancel: () => clipboard.writeText(results.innerText)
                             })
+
+                            //remove file at the end
+                            fs.unlinkSync(`${dir}/${url.substring(url.lastIndexOf("/") + 1)}`)
                         }
                     })
                 })
@@ -118,7 +138,7 @@ const { clipboard } = require("electron")
 
 //cool way of loading scripts
 request.get("https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js", (err, res, body) => {
-    if (err) BdApi.alert("Error while downloading CryptoJS", err)
+    if (err) BdApi.alert("hash", `Failed to download crypto-js: ${err}`)
     const script = document.createElement("script")
     script.innerHTML = body
     document.body.appendChild(script)
