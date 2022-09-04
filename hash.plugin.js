@@ -19,7 +19,7 @@ module.exports = hash => ({
             download("https://raw.githubusercontent.com/DxxxxY/BDPlugins/master/hash.plugin.js", `${__dirname}/hash.plugin.js`, (err) => {
                 if (err) return BdApi.alert("hash", `Failed to update: ${err}`)
                 console.log("[hash] Updated!")
-                BdApi.alert("hash", `Updated to ${hash.version}`)
+                BdApi.alert("hash", `Updated to ${hash.version}\nChanges:${hash.changes}`)
             })
         })
         console.log("[hash] Started!")
